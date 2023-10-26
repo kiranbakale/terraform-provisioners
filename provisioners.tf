@@ -29,10 +29,18 @@ resource "aws_instance" "provisionerinstance" {
   key_name               = "instancekey"
   vpc_security_group_ids = [aws_security_group.main.id]
 
-  provisioner "local-exec" {
-    command = "echo ${self.public_ip} > mypublicip.txt"
+  provisioner "file" {
+    source      = "./transfer.sh"
+    destination = "/home/ubuntu/transfer.sh"
   }
-  
+ 
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = "ubuntu"
+    private_key = file("./instancekey")
+    timeout     = "4m"
+  }
 
   tags = {
     Name = "test-instance"

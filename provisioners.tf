@@ -29,9 +29,11 @@ resource "aws_instance" "provisionerinstance" {
   key_name               = "instancekey"
   vpc_security_group_ids = [aws_security_group.main.id]
 
-  provisioner "file" {
-    source      = "./transfer.sh"
-    destination = "/home/ubuntu/transfer.sh"
+    provisioner "remote-exec" {
+     inline = [
+       "touch hello.txt",
+       "echo helloworld remote provisioner >> hello.txt",
+     ]
   }
  
   connection {
